@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: agrosphere-api-gateway
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OIDC_ISSUER_URI}
+  http:
+    client:
+      connect-timeout: ${GATEWAY_CONNECT_TIMEOUT:2s}
+      read-timeout: ${GATEWAY_READ_TIMEOUT:10s}
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: estate
+              uri: ${ESTATE_SERVICE_URL:http://localhost:8081}
+              predicates:
+                - Path=/api/v1/estates/**,/api/v1/divisions/**,/api/v1/blocks/**,/api/v1/rubber-clones/**
+            - id: spatial
+              uri: ${SPATIAL_SERVICE_URL:http://localhost:8082}
+              predicates:
+                - Path=/api/v1/spatial/**
+server:
+  port: ${SERVER_PORT:8080}
+  forward-headers-strategy: none
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  tracing:
+    sampling:
+      probability: ${TRACING_SAMPLE_PROBABILITY:0.1}
+logging:
+  structured:
+    format:
+      console: logstash
