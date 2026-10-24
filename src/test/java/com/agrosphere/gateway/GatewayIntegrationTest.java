@@ -46,7 +46,7 @@ class GatewayIntegrationTest {
         String url="http://127.0.0.1:"+downstream.getAddress().getPort();
         context=new SpringApplication(Application.class).run("--server.port=0","--spring.security.oauth2.resourceserver.jwt.issuer-uri="+issuer,
             "--OIDC_JWK_SET_URI="+url+"/certs","--ESTATE_SERVICE_URL="+url,"--SPATIAL_SERVICE_URL="+url,
-            "--GATEWAY_RATE_LIMIT=3","--GATEWAY_READ_TIMEOUT=100ms");
+            "--gateway.limits.body-bytes=1024","--GATEWAY_RATE_LIMIT=3","--GATEWAY_READ_TIMEOUT=100ms");
         base="http://127.0.0.1:"+((WebServerApplicationContext)context).getWebServer().getPort();
     }
     @AfterAll static void stop(){if(context!=null)context.close(); if(downstream!=null)downstream.stop(0);if(executor!=null)executor.shutdownNow();}
@@ -101,6 +101,15 @@ class GatewayIntegrationTest {
         String bearer=valid();for(int i=0;i<3;i++)assertEquals(200,get("/api/v1/estates",bearer).statusCode());
         var denied=get("/api/v1/estates",bearer);assertEquals(429,denied.statusCode()); assertTrue(denied.headers().firstValue("Retry-After").isPresent());
         assertEquals(200,get("/api/v1/estates",valid()).statusCode());
+    }
+    @Test void sizedAndStreamingBodiesAreBounded() throws Exception {
+        for(boolean streaming:List.of(false,true)) {
+            byte[] bytes=new byte[1025];
+            var publisher=streaming?HttpRequest.BodyPublishers.ofInputStream(()->new java.io.ByteArrayInputStream(bytes)):HttpRequest.BodyPublishers.ofByteArray(bytes);
+            var response=http.send(HttpRequest.newBuilder(URI.create(base+"/api/v1/estates"))
+                .header("Authorization","Bearer "+valid()).POST(publisher).build(),HttpResponse.BodyHandlers.ofString());
+            assertEquals(413,response.statusCode());assertTrue(response.body().contains("Payload Too Large"));
+        }
     }
     @Test void downstreamReadTimeoutIsSafeProblem() throws Exception {
         var response=get("/api/v1/estates/slow",valid());assertEquals(503,response.statusCode(),response.body());
