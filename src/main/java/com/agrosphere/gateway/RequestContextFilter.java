@@ -29,6 +29,7 @@ class RequestContextFilter extends OncePerRequestFilter {
             response.resetBuffer(); GatewayProblem.write(response,503,"Downstream service unavailable");
         } finally {
             log.atInfo().addKeyValue("event","gateway_access").addKeyValue("method",request.getMethod()).addKeyValue("path",request.getRequestURI())
+                .addKeyValue("traceId",request.getAttribute("gateway.traceId")).addKeyValue("spanId",request.getAttribute("gateway.spanId"))
                 .addKeyValue("status",response.getStatus()).addKeyValue("durationMs",(System.nanoTime()-started)/1000000)
                 .log("Gateway request completed"); MDC.remove("correlationId");
         }
