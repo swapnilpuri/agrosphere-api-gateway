@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 — 2026-10-24
+
+Route /api/v1/tapping/** to Operations with existing JWT, correlation and timeout policy.
+
 ## 0.2.0 — 2026-10-24
 
 Bounded declared/streamed JSON bodies; active trace/span fields in structured access logs; positive timeout validation; 12 real security/routing/integration tests.

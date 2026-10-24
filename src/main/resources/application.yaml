@@ -19,6 +19,10 @@ spring:
               uri: ${ESTATE_SERVICE_URL:http://localhost:8081}
               predicates:
                 - Path=/api/v1/estates/**,/api/v1/divisions/**,/api/v1/blocks/**,/api/v1/rubber-clones/**
+            - id: operations
+              uri: ${OPERATIONS_SERVICE_URL:http://localhost:8083}
+              predicates:
+                - Path=/api/v1/tapping/**
             - id: spatial
               uri: ${SPATIAL_SERVICE_URL:http://localhost:8082}
               predicates:
