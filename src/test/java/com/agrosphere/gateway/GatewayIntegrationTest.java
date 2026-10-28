@@ -22,7 +22,7 @@ class GatewayIntegrationTest {
     static ConfigurableApplicationContext context;
     static String base, issuer="https://issuer.example.invalid/realms/test";
     static HttpClient http=HttpClient.newHttpClient();
-    static volatile String receivedPath, receivedCorrelation, receivedBearer;
+    static volatile String receivedPath, receivedCorrelation, receivedBearer, receivedKey, receivedBody;
     @BeforeAll static void start() throws Exception {
         key=new RSAKeyGenerator(2048).keyID("test-key").generate();
         downstream=HttpServer.create(new InetSocketAddress("127.0.0.1",0),0);
@@ -35,6 +35,8 @@ class GatewayIntegrationTest {
         downstream.createContext("/api/", exchange -> {
             receivedPath=exchange.getRequestURI().toString(); receivedCorrelation=exchange.getRequestHeaders().getFirst("X-Correlation-ID");
             receivedBearer=exchange.getRequestHeaders().getFirst("Authorization");
+            receivedKey=exchange.getRequestHeaders().getFirst("Idempotency-Key");
+            receivedBody=new String(exchange.getRequestBody().readAllBytes(),java.nio.charset.StandardCharsets.UTF_8);
             if(receivedPath.endsWith("/slow"))try{Thread.sleep(500);}catch(InterruptedException ex){Thread.currentThread().interrupt();}
             byte[] bytes="{\"downstream\":true}".getBytes();
             exchange.getResponseHeaders().set("Content-Type","application/json");
@@ -82,6 +84,17 @@ class GatewayIntegrationTest {
         assertEquals(id,receivedCorrelation); assertEquals(id,response.headers().firstValue("X-Correlation-ID").orElseThrow());
         assertEquals("/api/v1/estates/test-id",response.headers().firstValue("Location").orElseThrow());
     }
+    @Test void collectionCommandsAndSummaryPreserveHeadersBodyAndQuery() throws Exception {
+        var correlation=UUID.randomUUID().toString();var key=UUID.randomUUID().toString();var bearer=valid();
+        var body="{\"wetLatexKg\":125.500,\"collectedAt\":\"2026-10-27T12:00:00.123456Z\"}";
+        var request=HttpRequest.newBuilder(URI.create(base+"/api/v1/tapping/collections"))
+            .header("Authorization","Bearer "+bearer).header("X-Correlation-ID",correlation).header("Idempotency-Key",key).header("Content-Type","application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(body)).build();
+        assertEquals(201,http.send(request,HttpResponse.BodyHandlers.ofString()).statusCode());
+        assertEquals(key,receivedKey);assertEquals(body,receivedBody);assertEquals(correlation,receivedCorrelation);assertEquals("Bearer "+bearer,receivedBearer);
+        var path="/api/v1/tapping/collections/summary?from=2026-10-27&to=2026-10-27&groupBy=block";
+        assertEquals(200,get(path,valid()).statusCode());assertEquals(path,receivedPath);
+    }
     @Test void invalidCryptographicAndClaimCasesAreDenied() throws Exception {
         for(String bearer:List.of("unsigned",token("test","wrong",issuer,Instant.now().plusSeconds(300),key),
             token("test","agrosphere-api","https://other.invalid",Instant.now().plusSeconds(300),key),
@@ -92,9 +105,10 @@ class GatewayIntegrationTest {
     @Test void corsAllowsOnlyConfiguredAngularOrigin() throws Exception {
         for(String origin:List.of("http://localhost:4200","https://evil.invalid")) {
             var response=http.send(HttpRequest.newBuilder(URI.create(base+"/api/v1/estates")).header("Origin",origin)
-                .header("Access-Control-Request-Method","POST").header("Access-Control-Request-Headers","authorization,content-type")
+                .header("Access-Control-Request-Method","POST").header("Access-Control-Request-Headers","authorization,content-type,idempotency-key")
                 .method("OPTIONS",HttpRequest.BodyPublishers.noBody()).build(),HttpResponse.BodyHandlers.ofString());
             assertEquals(origin.contains("localhost")?200:403,response.statusCode());
+            if(origin.contains("localhost"))assertTrue(response.headers().firstValue("Access-Control-Allow-Headers").orElseThrow().toLowerCase(java.util.Locale.ROOT).contains("idempotency-key"));
         }
     }
     @Test void authenticatedSubjectsHaveIndependentRateBudgets() throws Exception {

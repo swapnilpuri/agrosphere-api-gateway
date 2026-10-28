@@ -24,7 +24,7 @@ class SecurityConfiguration {
         var config = new CorsConfiguration();
         config.setAllowedOrigins(Arrays.stream(env.getProperty("CORS_ALLOWED_ORIGINS", "http://localhost:4200").split(",")).map(String::trim).toList());
         config.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization","Content-Type","X-Correlation-ID","traceparent","tracestate"));
+        config.setAllowedHeaders(List.of("Authorization","Content-Type","Idempotency-Key","X-Correlation-ID","traceparent","tracestate"));
         config.setExposedHeaders(List.of("X-Correlation-ID","Location","Retry-After")); config.setMaxAge(3600L);
         var source = new UrlBasedCorsConfigurationSource(); source.registerCorsConfiguration("/api/**", config); return source;
     }
