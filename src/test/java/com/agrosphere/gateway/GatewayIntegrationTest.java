@@ -70,7 +70,7 @@ class GatewayIntegrationTest {
         UUID.fromString(denied.headers().firstValue("X-Correlation-ID").orElseThrow());
     }
     @Test void allRoutesPreservePathsQueriesAndBearer() throws Exception {
-        for(String path:List.of("/api/v1/estates","/api/v1/estates/id/divisions","/api/v1/divisions/id/blocks","/api/v1/blocks/id","/api/v1/rubber-clones","/api/v1/spatial/features/id","/api/v1/tapping/schedules","/api/v1/tapping/assignments/id","/api/v1/tapping/summary")) {
+        for(String path:List.of("/api/v1/estates","/api/v1/estates/id/divisions","/api/v1/divisions/id/blocks","/api/v1/blocks/id","/api/v1/rubber-clones","/api/v1/spatial/features/id","/api/v1/tapping/schedules","/api/v1/tapping/assignments/id","/api/v1/tapping/summary","/api/v1/workers","/api/v1/workers/id/history","/api/v1/attendance/roster","/api/v1/attendance/days")) {
             String bearer=valid(); var response=get(path+"?size=5",bearer);assertEquals(200,response.statusCode(),response.body());
             assertEquals(path+"?size=5",receivedPath);assertEquals("Bearer "+bearer,receivedBearer);
             assertEquals(response.headers().firstValue("X-Correlation-ID").orElseThrow(),receivedCorrelation);
@@ -94,6 +94,14 @@ class GatewayIntegrationTest {
         assertEquals(key,receivedKey);assertEquals(body,receivedBody);assertEquals(correlation,receivedCorrelation);assertEquals("Bearer "+bearer,receivedBearer);
         var path="/api/v1/tapping/collections/summary?from=2026-10-27&to=2026-10-27&groupBy=block";
         assertEquals(200,get(path,valid()).statusCode());assertEquals(path,receivedPath);
+    }
+    @Test void workforceCommandsPreserveIdempotencyAndBodyWithoutBusinessLogic() throws Exception {
+        for(String path:List.of("/api/v1/workers","/api/v1/attendance/days")) {
+            var key=UUID.randomUUID().toString();var body="{\"dataProvenance\":\"SIMULATED\"}";
+            var response=http.send(HttpRequest.newBuilder(URI.create(base+path)).header("Authorization","Bearer "+valid())
+                .header("Content-Type","application/json").header("Idempotency-Key",key).POST(HttpRequest.BodyPublishers.ofString(body)).build(),HttpResponse.BodyHandlers.ofString());
+            assertEquals(201,response.statusCode());assertEquals(key,receivedKey);assertEquals(body,receivedBody);assertEquals(path,receivedPath);
+        }
     }
     @Test void invalidCryptographicAndClaimCasesAreDenied() throws Exception {
         for(String bearer:List.of("unsigned",token("test","wrong",issuer,Instant.now().plusSeconds(300),key),

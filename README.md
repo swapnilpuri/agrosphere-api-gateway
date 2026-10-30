@@ -1,5 +1,9 @@
 # AgroSphere API Gateway
 
+## WA-1 local status — 2026-10-29
+
+WA-1 locally adds /api/v1/workers/** and /api/v1/attendance/** to the Operations route, preserving JWT/audience/CORS/correlation and Idempotency-Key forwarding. Maven route/security tests and disposable real-platform acceptance verify this Unreleased change. No deployment is applied.
+
 Milestone 1C, release 0.2.0. Independent Java 25 / Spring Boot 4.0.9 / Spring Cloud 2025.1.4 (Gateway MVC 5.0.4). The existing compatible MVC starter is retained. No domain logic, database or discovery server is added.
 
 Run ./mvnw verify (Windows: .\mvnw.cmd verify) on JDK 25. Twelve JUnit 5 tests manage contexts explicitly: the original four security checks and eight real HTTP/RSA-JWKS integration cases cover routes/query strings/bearer propagation, POST/Location, correlation, signature/issuer/audience/expiry, CORS, rate limits and downstream timeouts. SpringExtension is intentionally unused under the existing Spring 7/JUnit 5 baseline. Build independently with docker build -t agrosphere-api-gateway:0.2.0 .; the pinned Maven/Temurin25 builder runs verification, and runtime UID/GID is 10001:10001.

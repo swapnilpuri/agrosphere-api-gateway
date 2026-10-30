@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased — 2026-10-29 WA-1
+
+Route workforce worker/attendance paths to Operations; verify path, body and Idempotency-Key forwarding with existing JWT/CORS policies.
+
 ## Unreleased - 2026-10-27 local Milestone 3B
 
 Test coverage for collection Idempotency-Key, bearer, correlation, exact JSON body and summary query forwarding through the existing tapping wildcard. Allow Idempotency-Key in browser CORS preflight; no route or business-logic change.

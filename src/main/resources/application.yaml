@@ -22,7 +22,7 @@ spring:
             - id: operations
               uri: ${OPERATIONS_SERVICE_URL:http://localhost:8083}
               predicates:
-                - Path=/api/v1/tapping/**
+                - Path=/api/v1/tapping/**,/api/v1/workers/**,/api/v1/attendance/**
             - id: spatial
               uri: ${SPATIAL_SERVICE_URL:http://localhost:8082}
               predicates:
