@@ -1,5 +1,9 @@
 # Repository instructions
 
+## Owner-approved II-1 routing — 2026-10-31
+
+Accepted II-T06 adds /api/v1/inspections/** and /api/v1/incidents/** to Operations routing, preserving transport/JWT/audience/CORS/correlation/idempotency/timeouts and existing routes. No business logic, new roles/credentials, running-stack or production/Git/AEO operation. See Architecture INCIDENT_INSPECTION_CONTRACT_APPROVAL.md and accepted II-1 scope.
+
 Work only within this independent Git repository. No parent repository, submodules, shared persistence models, cross-service SQL or multi-service Maven parent.
 
 Current scope: Milestone 1C gateway integration: routing, JWT, CORS, correlation, timeouts, local rate limiting, observability and tests. No plantation business logic.
@@ -13,3 +17,15 @@ Run repository checks documented in README.md. Report actual checks separately f
 ## Owner-authorized WA-1 — 2026-10-29
 
 The accepted WA-1 scope adds only /api/v1/workers/** and /api/v1/attendance/** to Operations routing. Preserve JWT/audience, CORS, correlation, idempotency and timeout behavior; no business logic belongs here. D08 workload/rollout and D09 privacy/retention remain gates. No REAL worker data, commit/push/publish, production/destructive migration, existing-stack/private-environment or AEO change is authorized.
+
+## AN-1 exact executable accepted — 2026-10-31
+
+Architecture ALERTS_NOTIFICATIONS_CONTRACT_APPROVAL.md records owner acceptance of the exact four artifacts, local Contracts 0.8.0 release and Operations/Web pins. Continue accepted AN-T03–09 by dependency; preserve prior features/artifacts and reviewed bytes. Generated-only verification; AN-D07/08 and WA/II/M2 gates remain open. No non-generated account rollout, REAL, existing-stack/private configuration/role/credential/external delivery/Git/deployment/destructive/data-reset/AEO action. Gateway adds only /api/v1/alerts/**; Infrastructure generated-only drills reuse existing topology without a new alert queue.
+
+## AN-1 local verification state — 2026-10-31
+
+Architecture ALERTS_NOTIFICATIONS_VERIFICATION.md records local implementation and generated-only checks after exact executable acceptance. Earlier preparation labels are historical. Preserve 0.8.0 pins/old bytes/V1–V5/Web config/index and existing data/volumes. Default-disabled subject-policy gate, AN-D07/08, WA/II/M2 and no non-generated rollout/REAL/live-stack/private configuration/role/credential/Git/deployment/AEO exclusions remain.
+
+## Owner-approved AN privacy extension — 2026-10-31
+
+Architecture ALERTS_PRIVACY_APPROVAL.md records exact five-artifact privacy candidate acceptance (manifest ea6402a205d1da7a0801090b0acabac58ae164ba6544b474d709d8a4a608286b), local independent Contracts 0.9.0 release/archive/pins and generated-only AP-T02–07 implementation. Preserve accepted bytes, V1–V6, old events/records and all staged work/Web config. Additive privacy storage and narrowly scoped maintenance may be tested only in separately owned disposable generated databases. No existing-stack/private configuration/actual-account/REAL/existing role or credential/destructive migration/historical conversion/external delivery/Git publication/deployment/AEO action. AP-T08 local-stack execution remains separately gated; do not repeat II-1. Prior approval/pending labels remain historical within their scope; do not ask again for this exact acceptance.

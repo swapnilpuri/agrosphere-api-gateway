@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased — 2026-10-31 AN-1
+
+Adds only /api/v1/alerts/** to Operations routing, retaining independent JWT/audience/CORS/correlation/idempotency/timeout/limiter behavior. Existing stack not upgraded; no business logic/roles/credentials or external delivery.
+
+
+## Unreleased - 2026-10-31 II-1
+
+Route inspections/incidents to Operations with existing JWT/audience, correlation, idempotency, CORS and timeout policies; no business logic or running-stack changes.
+
 ## Unreleased — 2026-10-29 WA-1
 
 Route workforce worker/attendance paths to Operations; verify path, body and Idempotency-Key forwarding with existing JWT/CORS policies.
@@ -21,3 +30,7 @@ Milestone 1C path routing, RS256 issuer/audience JWT checks, CORS, UUID correlat
 ## 0.1.0 — 2026-10-23
 
 Initial Milestone 0 foundation. No production business capability is delivered.
+
+## AN privacy routing — 2026-10-31
+
+Adds /api/v2/alerts/** to the existing Operations route, retaining v1 and all bearer/correlation/idempotency/body transport. No alert business logic, roles/credentials or existing-stack change. New v2 forwarding regression added.

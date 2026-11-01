@@ -21,3 +21,11 @@ For the integrated platform use agrosphere-infrastructure --profile apps; all ce
 POST/PUT/PATCH JSON bodies are limited to 2 MiB by gateway.limits.body-bytes; declared-length and streaming bodies are both bounded before proxying. Excess returns 413 Problem Details. The integration test includes both transfer styles. The shared platform also authenticates real development users through PKCE and independently tests backend authorization.
 
 Milestone 3B forwarding regression: 13 tests include collection Idempotency-Key, bearer, correlation and exact JSON body preservation plus /collections/summary date/group queries through the existing /api/v1/tapping/** route. Browser CORS preflight explicitly permits Idempotency-Key. No collection business logic is added to Gateway.
+
+## AN-1 local routing — 2026-10-31
+
+Adds only /api/v1/alerts/** to Operations routing, retaining independent JWT/audience/CORS/correlation/idempotency/timeout/limiter behavior. Existing stack not upgraded; no business logic/roles/credentials or external delivery.
+
+## Privacy v2 alert routing — 2026-10-31
+
+The accepted privacy extension adds /api/v2/alerts/** to the Operations predicate and a transport regression; v1 and existing routes/security remain. No running stack changed.

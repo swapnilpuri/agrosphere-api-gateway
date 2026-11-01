@@ -70,7 +70,7 @@ class GatewayIntegrationTest {
         UUID.fromString(denied.headers().firstValue("X-Correlation-ID").orElseThrow());
     }
     @Test void allRoutesPreservePathsQueriesAndBearer() throws Exception {
-        for(String path:List.of("/api/v1/estates","/api/v1/estates/id/divisions","/api/v1/divisions/id/blocks","/api/v1/blocks/id","/api/v1/rubber-clones","/api/v1/spatial/features/id","/api/v1/tapping/schedules","/api/v1/tapping/assignments/id","/api/v1/tapping/summary","/api/v1/workers","/api/v1/workers/id/history","/api/v1/attendance/roster","/api/v1/attendance/days")) {
+        for(String path:List.of("/api/v1/estates","/api/v1/estates/id/divisions","/api/v1/divisions/id/blocks","/api/v1/blocks/id","/api/v1/rubber-clones","/api/v1/spatial/features/id","/api/v1/tapping/schedules","/api/v1/tapping/assignments/id","/api/v1/tapping/summary","/api/v1/workers","/api/v1/workers/id/history","/api/v1/attendance/roster","/api/v1/attendance/days","/api/v1/inspections","/api/v1/incidents/id/resolve")) {
             String bearer=valid(); var response=get(path+"?size=5",bearer);assertEquals(200,response.statusCode(),response.body());
             assertEquals(path+"?size=5",receivedPath);assertEquals("Bearer "+bearer,receivedBearer);
             assertEquals(response.headers().firstValue("X-Correlation-ID").orElseThrow(),receivedCorrelation);
@@ -96,12 +96,26 @@ class GatewayIntegrationTest {
         assertEquals(200,get(path,valid()).statusCode());assertEquals(path,receivedPath);
     }
     @Test void workforceCommandsPreserveIdempotencyAndBodyWithoutBusinessLogic() throws Exception {
-        for(String path:List.of("/api/v1/workers","/api/v1/attendance/days")) {
+        for(String path:List.of("/api/v1/workers","/api/v1/attendance/days","/api/v1/inspections","/api/v1/incidents")) {
             var key=UUID.randomUUID().toString();var body="{\"dataProvenance\":\"SIMULATED\"}";
             var response=http.send(HttpRequest.newBuilder(URI.create(base+path)).header("Authorization","Bearer "+valid())
                 .header("Content-Type","application/json").header("Idempotency-Key",key).POST(HttpRequest.BodyPublishers.ofString(body)).build(),HttpResponse.BodyHandlers.ofString());
             assertEquals(201,response.statusCode());assertEquals(key,receivedKey);assertEquals(body,receivedBody);assertEquals(path,receivedPath);
         }
+    }
+    @Test void alertCommandsAndCountsPreserveTransport() throws Exception {
+        String path="/api/v1/alerts/00000000-0000-0000-0000-000000000001/read",key=UUID.randomUUID().toString(),body="{\"attentionVersion\":1}";
+        var response=http.send(HttpRequest.newBuilder(URI.create(base+path)).header("Authorization","Bearer "+valid()).header("Content-Type","application/json").header("Idempotency-Key",key).POST(HttpRequest.BodyPublishers.ofString(body)).build(),HttpResponse.BodyHandlers.ofString());
+        assertEquals(201,response.statusCode());assertEquals(path,receivedPath);assertEquals(key,receivedKey);assertEquals(body,receivedBody);
+        var query="/api/v1/alerts/counts?estateId=00000000-0000-0000-0000-000000000001";
+        assertEquals(200,get(query,valid()).statusCode());assertEquals(query,receivedPath);
+    }
+    @Test void privacyAlertCommandsAndCountsPreserveTransport() throws Exception {
+        String path="/api/v2/alerts/00000000-0000-0000-0000-000000000001/read",key=UUID.randomUUID().toString(),body="{\"attentionVersion\":1}";
+        var response=http.send(HttpRequest.newBuilder(URI.create(base+path)).header("Authorization","Bearer "+valid()).header("Content-Type","application/json").header("Idempotency-Key",key).POST(HttpRequest.BodyPublishers.ofString(body)).build(),HttpResponse.BodyHandlers.ofString());
+        assertEquals(201,response.statusCode());assertEquals(path,receivedPath);assertEquals(key,receivedKey);assertEquals(body,receivedBody);
+        var query="/api/v2/alerts/counts?estateId=00000000-0000-0000-0000-000000000001";
+        assertEquals(200,get(query,valid()).statusCode());assertEquals(query,receivedPath);
     }
     @Test void invalidCryptographicAndClaimCasesAreDenied() throws Exception {
         for(String bearer:List.of("unsigned",token("test","wrong",issuer,Instant.now().plusSeconds(300),key),
