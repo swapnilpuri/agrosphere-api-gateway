@@ -47,7 +47,7 @@ class GatewayIntegrationTest {
         }); downstream.start();
         String url="http://127.0.0.1:"+downstream.getAddress().getPort();
         context=new SpringApplication(Application.class).run("--server.port=0","--spring.security.oauth2.resourceserver.jwt.issuer-uri="+issuer,
-            "--OIDC_JWK_SET_URI="+url+"/certs","--ESTATE_SERVICE_URL="+url,"--SPATIAL_SERVICE_URL="+url,"--OPERATIONS_SERVICE_URL="+url,
+            "--OIDC_JWK_SET_URI="+url+"/certs","--ESTATE_SERVICE_URL="+url,"--SPATIAL_SERVICE_URL="+url,"--OPERATIONS_SERVICE_URL="+url,"--TELEMETRY_SERVICE_URL="+url,"--ANALYTICS_SERVICE_URL="+url,
             "--gateway.limits.body-bytes=1024","--GATEWAY_RATE_LIMIT=3","--GATEWAY_READ_TIMEOUT=100ms");
         base="http://127.0.0.1:"+((WebServerApplicationContext)context).getWebServer().getPort();
     }
@@ -70,9 +70,10 @@ class GatewayIntegrationTest {
         UUID.fromString(denied.headers().firstValue("X-Correlation-ID").orElseThrow());
     }
     @Test void allRoutesPreservePathsQueriesAndBearer() throws Exception {
-        for(String path:List.of("/api/v1/estates","/api/v1/estates/id/divisions","/api/v1/divisions/id/blocks","/api/v1/blocks/id","/api/v1/rubber-clones","/api/v1/spatial/features/id","/api/v1/tapping/schedules","/api/v1/tapping/assignments/id","/api/v1/tapping/summary","/api/v1/workers","/api/v1/workers/id/history","/api/v1/attendance/roster","/api/v1/attendance/days","/api/v1/inspections","/api/v1/incidents/id/resolve")) {
-            String bearer=valid(); var response=get(path+"?size=5",bearer);assertEquals(200,response.statusCode(),response.body());
-            assertEquals(path+"?size=5",receivedPath);assertEquals("Bearer "+bearer,receivedBearer);
+        for(String path:List.of("/api/v1/analytics/estates/estate-id/blocks/block-id/production/daily?from=2026-01-01&to=2026-01-02","/api/v1/telemetry/estates/estate-id/blocks/block-id/latest","/api/v1/estates","/api/v1/estates/id/divisions","/api/v1/divisions/id/blocks","/api/v1/blocks/id","/api/v1/rubber-clones","/api/v1/spatial/features/id","/api/v1/tapping/schedules","/api/v1/tapping/assignments/id","/api/v1/tapping/summary","/api/v1/workers","/api/v1/workers/id/history","/api/v1/attendance/roster","/api/v1/attendance/days","/api/v1/inspections","/api/v1/incidents/id/resolve")) {
+            String query=path.contains("?")?"&size=5":"?size=5";
+            String bearer=valid(); var response=get(path+query,bearer);assertEquals(200,response.statusCode(),response.body());
+            assertEquals(path+query,receivedPath);assertEquals("Bearer "+bearer,receivedBearer);
             assertEquals(response.headers().firstValue("X-Correlation-ID").orElseThrow(),receivedCorrelation);
         }
     }

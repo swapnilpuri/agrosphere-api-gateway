@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased - ANL-01 runtime, 2026-11-05
+
+Add only the Analytics prefix route with path/query/bearer preservation regression coverage; no new public role or unrelated route change.
+
+## Unreleased — 2026-11-04 TLM-01 adapters
+
+Route only /api/v1/telemetry/** to Telemetry; retain transport/security behavior and verify path/query/bearer preservation in the existing 16-case suite.
+
 ## Unreleased — 2026-10-31 AN-1
 
 Adds only /api/v1/alerts/** to Operations routing, retaining independent JWT/audience/CORS/correlation/idempotency/timeout/limiter behavior. Existing stack not upgraded; no business logic/roles/credentials or external delivery.

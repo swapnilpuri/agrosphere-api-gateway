@@ -15,6 +15,10 @@ spring:
       server:
         webmvc:
           routes:
+            - id: ai
+              uri: ${AI_SERVICE_URL:http://localhost:8086}
+              predicates:
+                - Path=/api/v1/ai/**
             - id: estate
               uri: ${ESTATE_SERVICE_URL:http://localhost:8081}
               predicates:
@@ -27,6 +31,14 @@ spring:
               uri: ${SPATIAL_SERVICE_URL:http://localhost:8082}
               predicates:
                 - Path=/api/v1/spatial/**
+            - id: analytics
+              uri: ${ANALYTICS_SERVICE_URL:http://localhost:8085}
+              predicates:
+                  - Path=/api/v1/analytics/**
+            - id: telemetry
+              uri: ${TELEMETRY_SERVICE_URL:http://localhost:8084}
+              predicates:
+                - Path=/api/v1/telemetry/**
 server:
   port: ${SERVER_PORT:8080}
   forward-headers-strategy: none

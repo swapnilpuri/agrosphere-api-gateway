@@ -29,3 +29,13 @@ Architecture ALERTS_NOTIFICATIONS_VERIFICATION.md records local implementation a
 ## Owner-approved AN privacy extension — 2026-10-31
 
 Architecture ALERTS_PRIVACY_APPROVAL.md records exact five-artifact privacy candidate acceptance (manifest ea6402a205d1da7a0801090b0acabac58ae164ba6544b474d709d8a4a608286b), local independent Contracts 0.9.0 release/archive/pins and generated-only AP-T02–07 implementation. Preserve accepted bytes, V1–V6, old events/records and all staged work/Web config. Additive privacy storage and narrowly scoped maintenance may be tested only in separately owned disposable generated databases. No existing-stack/private configuration/actual-account/REAL/existing role or credential/destructive migration/historical conversion/external delivery/Git publication/deployment/AEO action. AP-T08 local-stack execution remains separately gated; do not repeat II-1. Prior approval/pending labels remain historical within their scope; do not ask again for this exact acceptance.
+
+
+## TLM-01 adapters authorized — 2026-11-01
+
+Architecture MQTT_POC_ADAPTER_APPROVAL.md accepts exact package 389f1d3cfa6ca80fd602c2f945b9f23965723b53d5ca169919f7e11099e2bc75. Implement Telemetry SIMULATED ingestion/persistence/outbox/latest API, Gateway telemetry route only and Infrastructure generated-only owned disposable drills. Exact SQL/ACL/client engineering review and generated fixture credentials included. No repeated domain/executable approval. Preserve Contracts 0.10.0 pins, old migrations/config/data/indexes, existing stacks/private config/roles/credentials, REAL/Git/deployment/AEO exclusions.
+
+
+## ANL-01 bounded runtime continuation — 2026-11-05
+
+Owner instructed "please resume" immediately after the bounded runtime/dashboard approval request. Architecture ANALYTICS_POC_ADAPTER_APPROVAL.md records that continuation authority for exact review 855fe1894c530cf7942d3175e7a3eae850d0b34abff976a5e6bf7ba87a5618f3: SIMULATED materialized Analytics, Analytics-only Gateway route, read-only Web dashboard and new owned disposable verification. Existing 0.11.0 contracts/pins unchanged; exact SQL/grant engineering review precedes new-fixture installation. No existing-stack/private config/data/roles/credentials, REAL, production/Git/deployment/AEO action. Preserve indexes/prior features and original owner/field/milestone gates.
