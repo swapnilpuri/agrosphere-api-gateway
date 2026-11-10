@@ -1,3 +1,7 @@
+# M4 local Gateway 0.3.0 — 2026-11-10
+
+Add only `/api/v1/ai/**` routing via `AI_SERVICE_URL` (default `http://localhost:8086`), preserving all prior routes/JWT/audience/CORS/limits/correlation/timeouts. The AI service independently enforces its own authentication/scope/ownership gates and defaults disabled. Maven verification and generated real Gateway/Keycloak/AI/Web checks passed; see Architecture's M4 delivery report. This does not change existing stack image selection or grant deployment/REAL/publication authority.
+
 # AgroSphere API Gateway
 
 ## WA-1 local status — 2026-10-29

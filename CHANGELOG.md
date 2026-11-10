@@ -1,3 +1,7 @@
+## 0.3.0 — 2026-11-10 (local M4)
+
+Add only /api/v1/ai/** transport routing to independently deployed/disabled AI Service. Existing JWT/audience/CORS/correlation/rate/timeout and all prior routes remain. Local generated verification only; no existing deployment or Git publication.
+
 # Changelog
 
 ## Unreleased - ANL-01 runtime, 2026-11-05
